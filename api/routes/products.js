@@ -6,13 +6,28 @@ const Product = require('../models/product')
 router.get('/', (req, res, next) => { //see
     Product
         .find()
+        .select('name price _id')
         .exec()
         .then(docs => {
-            console.log(docs);
+            const response = {
+                count: docs.length,
+                product: docs.map(doc =>{
+                    return{
+                        name: doc.name,
+                        price: doc.price,
+                        _id : doc.id,
+                        request:{
+                            type:"GET",
+                            url:'http://localhost:3000/products/'+ doc.id
+                        }
+                    }
+                })
+            }
+            console.log(response);
             // if(docs.length >= 0){
             res
                 .status(200)
-                .json(docs)
+                .json(response)
             // }else{     res.status(404).json({         message:"No Entries Found"     }) }
         })
         .catch(err => {
@@ -36,7 +51,17 @@ router.post('/', (req, res, next) => { //create
             console.log(result);
             res
                 .status(201)
-                .json({message: 'Handling POST requests to /products', createProduct: product});
+                .json({message: 'Created product successfully', 
+                createdProduct: {
+                    name: result.name,
+                    price: result.price,
+                    _id: result._id,
+                    request:{
+                        type:"GET",
+                        url:'http://localhost:3000/products/'+ result.id
+                    }
+                }
+            });
         })
         .catch(err => {
             console.log(err),
@@ -51,13 +76,21 @@ router.get('/:productId', (req, res, next) => {
     const id = req.params.productId
     Product
         .findById(id)
+        .select("name price _id")
         .exec()
         .then(doc => {
             console.log("From Database", doc);
             if (doc) {
                 res
                     .status(200)
-                    .json(doc)
+                    .json({
+                        product: doc,
+                    request:{
+                        type:'GET',
+                        description: "Get all product",
+                        url: "http://localhost/products" 
+                    }
+                    });
             } else {
                 res
                     .status(404)
@@ -84,11 +117,18 @@ router.patch('/:productId', (req, res, next) => { //update
     Product.update({
         _id: id
     }, {$set: updateOps})
+    
         .exec()
         .then(
         result => {
             console.log(result);
-            res.status(200).json(result)
+            res.status(200).json({
+                message: 'product Updated',
+                request:{
+                    type:"GET",
+                    url:"http//localhost:3000/products/" + id
+                }
+            })
         }
     ).catch(
         err =>{
@@ -105,7 +145,14 @@ router.patch('/:productId', (req, res, next) => { //update
             .then(result => {
                 res
                     .status(200)
-                    .json(result);
+                    .json({
+                        message:"product deleted",
+                        request:{
+                            type:"POST",
+                            url:"http//localhost:3000/products/",
+                            body:{ name: "string", price: "number"}
+                        }
+                    });
             })
             .catch(err => {
                 console.log(err);
