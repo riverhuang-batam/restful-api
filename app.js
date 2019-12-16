@@ -12,6 +12,7 @@ mongoose.connect('mongodb+srv://admin:' + process.env.MONGO_ATLAS_PW +'@shop-res
     useUnifiedTopology: true,
 })
 // mongoose.Promise = global.Promise
+app.use('/uploads',express.static('uploads'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(morgan('dev'));
