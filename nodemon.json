@@ -1,5 +1,6 @@
 {
     "env":{
-        "MONGO_ATLAS_PW":"Firewall421"
+        "MONGO_ATLAS_PW":"Firewall421",
+        "JWT_KEY":"secret"
     }
 }
