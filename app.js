@@ -10,6 +10,7 @@ const userRoutes = require('./api/routes/user')
 mongoose.connect('mongodb+srv://admin:' + process.env.MONGO_ATLAS_PW +'@shop-restful-api-howto.mongodb.net/test?retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useCreateIndex: true, // mongoose problem warning
 })
 // mongoose.Promise = global.Promise
 app.use('/uploads',express.static('uploads'));

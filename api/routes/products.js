@@ -3,6 +3,8 @@ const router = express.Router();
 const mongoose = require('mongoose')
 const Product = require('../models/product')
 const multer = require('multer');
+const checkAuth = require('../middleware/check-auth')
+
 const storage = multer.diskStorage({
     destination: function(req, file, cb){
         cb(null, './uploads/')
@@ -63,7 +65,7 @@ router.get('/', (req, res, next) => { //see
                 .json({error: err});
         })
 });
-router.post('/', upload.single('productImage'), (req, res, next) => { //create
+router.post('/', checkAuth, upload.single('productImage'), (req, res, next) => { //create
     console.log(req.file)
     const product = new Product({
         _id: new mongoose
@@ -136,7 +138,7 @@ router.get('/:productId', (req, res, next) => {
         // the special ID',   id : id     }); }else{     res.status(200).json({
         // message: 'You passed an ID'     }); }
 });
-router.patch('/:productId', (req, res, next) => { //update
+router.patch('/:productId', checkAuth, (req, res, next) => { //update
     const id = req.params.productId;
     const updateOps = {};
     for (const ops of req.body) {
@@ -165,7 +167,7 @@ router.patch('/:productId', (req, res, next) => { //update
             })
         }
     )});
-    router.delete('/:productId', (req, res, next) => { //delete
+    router.delete('/:productId', checkAuth, (req, res, next) => { //delete
         const id = req.params.productId;
         Product
             .remove({_id: id})
